@@ -1,0 +1,37 @@
+@model IEnumerable<PocApp.Controllers.UserRowVm>
+@{
+    ViewData["Title"] = "Users";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Users</h2>
+    <a class="btn btn-primary" asp-area="Identity" asp-page="/Account/Register">+ Register user</a>
+</div>
+
+<div class="row">
+    <div class="col-lg-7">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr><th>Name</th><th>Email</th><th class="text-end">Projects</th><th class="text-end">Tasks</th><th></th></tr>
+            </thead>
+            <tbody>
+                @foreach (var u in Model)
+                {
+                    <tr>
+                        <td><a asp-action="Details" asp-route-id="@u.Id">@(u.FullName ?? "(no name)")</a></td>
+                        <td>@u.Email</td>
+                        <td class="text-end">@u.ProjectCount</td>
+                        <td class="text-end">@u.TaskCount</td>
+                        <td class="text-end">
+                            <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@u.Id">Edit</a>
+                            <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@u.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-lg-5">
+        @await Component.InvokeAsync("Calendar", new { year = (int?)ViewBag.Year, month = (int?)ViewBag.Month })
+    </div>
+</div>

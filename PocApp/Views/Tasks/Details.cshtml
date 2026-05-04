@@ -1,0 +1,22 @@
+@model PocApp.Models.TaskItem
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">@Model.Title</h2>
+    <div>
+        <a class="btn btn-outline-secondary" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+        <a class="btn btn-outline-secondary" asp-action="Index">Back</a>
+    </div>
+</div>
+
+<dl class="row">
+    <dt class="col-sm-3">Project</dt>
+    <dd class="col-sm-9"><a asp-controller="Projects" asp-action="Details" asp-route-id="@Model.ProjectId">@Model.Project?.Name</a></dd>
+    <dt class="col-sm-3">Due</dt><dd class="col-sm-9">@Model.DueDate.ToString("yyyy-MM-dd")</dd>
+    <dt class="col-sm-3">Status</dt><dd class="col-sm-9"><span class="status-badge @Model.Status.ToString().ToLower()">@Model.Status</span></dd>
+    <dt class="col-sm-3">Assigned</dt><dd class="col-sm-9">@(Model.AssignedUser?.FullName ?? "-")</dd>
+    <dt class="col-sm-3">Description</dt>
+    <dd class="col-sm-9">@(string.IsNullOrWhiteSpace(Model.Description) ? "—" : Model.Description)</dd>
+</dl>

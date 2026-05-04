@@ -1,0 +1,49 @@
+@model IEnumerable<PocApp.Models.Project>
+@{
+    ViewData["Title"] = "Projects";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Projects</h2>
+    <a class="btn btn-primary" asp-action="Create">+ New project</a>
+</div>
+
+<div class="row">
+    <div class="col-lg-7">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Owner</th>
+                    <th class="text-end">Tasks</th>
+                    <th>Created</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model)
+                {
+                    <tr>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@p.Id">@p.Name</a>
+                            @if (!string.IsNullOrWhiteSpace(p.Description))
+                            {
+                                <div class="small text-muted">@p.Description</div>
+                            }
+                        </td>
+                        <td>@(p.Owner?.FullName ?? p.Owner?.Email ?? "-")</td>
+                        <td class="text-end">@p.Tasks.Count</td>
+                        <td>@p.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd")</td>
+                        <td class="text-end">
+                            <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@p.Id">Edit</a>
+                            <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@p.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-lg-5">
+        @await Component.InvokeAsync("Calendar", new { year = (int?)ViewBag.Year, month = (int?)ViewBag.Month })
+    </div>
+</div>

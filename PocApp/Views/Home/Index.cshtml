@@ -1,0 +1,53 @@
+@using PocApp.Models
+@{
+    ViewData["Title"] = "Dashboard";
+    var upcoming = (List<TaskItem>)ViewBag.UpcomingTasks;
+}
+
+<div class="row mb-3">
+    <div class="col-md-4">
+        <div class="card text-bg-light"><div class="card-body">
+            <div class="text-muted small">Users</div>
+            <div class="display-6">@ViewBag.UserCount</div>
+        </div></div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-bg-light"><div class="card-body">
+            <div class="text-muted small">Projects</div>
+            <div class="display-6">@ViewBag.ProjectCount</div>
+        </div></div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-bg-light"><div class="card-body">
+            <div class="text-muted small">Open tasks</div>
+            <div class="display-6">@ViewBag.OpenTaskCount</div>
+        </div></div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        @await Component.InvokeAsync("Calendar", new { year = (int?)ViewBag.Year, month = (int?)ViewBag.Month })
+    </div>
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header"><strong>Upcoming tasks</strong></div>
+            <ul class="list-group list-group-flush">
+                @if (upcoming.Count == 0)
+                {
+                    <li class="list-group-item text-muted">No upcoming tasks.</li>
+                }
+                @foreach (var t in upcoming)
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                        <div>
+                            <a asp-controller="Tasks" asp-action="Details" asp-route-id="@t.Id">@t.Title</a>
+                            <div class="small text-muted">@t.Project?.Name &middot; @(t.AssignedUser?.FullName ?? "Unassigned")</div>
+                        </div>
+                        <span class="badge bg-secondary">@t.DueDate.ToString("MMM d")</span>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,21 @@
+@model PocApp.Models.ApplicationUser
+@{
+    ViewData["Title"] = "Delete user";
+}
+
+<h2 class="text-danger">Delete user?</h2>
+
+<div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+<dl class="row">
+    <dt class="col-sm-3">Name</dt><dd class="col-sm-9">@(Model.FullName ?? "-")</dd>
+    <dt class="col-sm-3">Email</dt><dd class="col-sm-9">@Model.Email</dd>
+    <dt class="col-sm-3">Owned projects</dt><dd class="col-sm-9">@Model.OwnedProjects.Count</dd>
+    <dt class="col-sm-3">Assigned tasks</dt><dd class="col-sm-9">@Model.AssignedTasks.Count (will be unassigned)</dd>
+</dl>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a class="btn btn-link" asp-action="Index">Cancel</a>
+</form>

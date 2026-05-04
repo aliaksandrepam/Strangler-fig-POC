@@ -1,0 +1,19 @@
+@model PocApp.Models.TaskItem
+@{
+    ViewData["Title"] = "Delete task";
+}
+
+<h2 class="text-danger">Delete task?</h2>
+
+<dl class="row">
+    <dt class="col-sm-3">Title</dt><dd class="col-sm-9">@Model.Title</dd>
+    <dt class="col-sm-3">Project</dt><dd class="col-sm-9">@Model.Project?.Name</dd>
+    <dt class="col-sm-3">Due</dt><dd class="col-sm-9">@Model.DueDate.ToString("yyyy-MM-dd")</dd>
+    <dt class="col-sm-3">Assigned</dt><dd class="col-sm-9">@(Model.AssignedUser?.FullName ?? "-")</dd>
+</dl>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a class="btn btn-link" asp-action="Index">Cancel</a>
+</form>

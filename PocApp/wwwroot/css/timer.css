@@ -1,0 +1,95 @@
+.timer-widget {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
+    background: var(--pp-primary-soft, #eef0ff);
+    color: var(--pp-text, #1f2a44);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.8rem;
+    font-weight: 500;
+    line-height: 1.2;
+    margin-right: 0.6rem;
+    transition: opacity 0.2s ease, background 0.2s ease;
+}
+.timer-widget .conn-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #6b7385;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+.timer-widget.is-connected .conn-dot {
+    background: #16a34a;
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.18);
+}
+.timer-widget.is-reconnecting .conn-dot {
+    background: #f59e0b;
+    animation: timer-pulse 1s ease-in-out infinite;
+}
+.timer-widget.is-disconnected .conn-dot {
+    background: #dc2626;
+}
+.timer-widget .timer-clock { font-weight: 600; }
+.timer-widget .timer-uptime { color: var(--pp-muted, #6b7385); font-size: 0.72rem; }
+
+/* Paused state — shared timer stopped by some user */
+.timer-widget.is-paused {
+    background: #fff7ed;
+    color: #92400e;
+}
+.timer-widget.is-paused .timer-clock { opacity: 0.55; }
+.timer-widget.is-paused .timer-uptime::before {
+    content: "PAUSED";
+    background: #f59e0b;
+    color: #fff;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 3px;
+    margin-right: 4px;
+    letter-spacing: 0.04em;
+}
+
+/* Toggle button — sits next to the timer pill */
+.timer-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.2rem 0.6rem;
+    border: 1px solid var(--pp-border, #e3e7ee);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--pp-text, #1f2a44);
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    margin-right: 0.6rem;
+    transition: all 0.15s ease;
+}
+.timer-toggle::before {
+    content: "";
+    display: inline-block;
+    width: 0; height: 0;
+}
+.timer-toggle.is-running::before {
+    /* Stop = filled square */
+    width: 8px; height: 8px;
+    background: #dc2626;
+    border-radius: 1px;
+}
+.timer-toggle.is-stopped::before {
+    /* Start = right-pointing triangle */
+    border-style: solid;
+    border-width: 5px 0 5px 8px;
+    border-color: transparent transparent transparent #16a34a;
+}
+.timer-toggle:hover {
+    background: var(--pp-primary-soft, #eef0ff);
+    border-color: var(--pp-primary, #4f46e5);
+    color: var(--pp-primary-dark, #4338ca);
+}
+.timer-toggle:disabled { opacity: 0.5; cursor: not-allowed; }
+
+@keyframes timer-pulse { 50% { opacity: 0.4; } }

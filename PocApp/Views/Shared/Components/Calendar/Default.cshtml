@@ -1,0 +1,81 @@
+@using PocApp.ViewComponents
+@model CalendarViewModel
+
+@{
+    var firstWeekdayOffset = ((int)Model.FirstDay.DayOfWeek + 6) % 7; // Monday-first
+    var totalCells = (int)Math.Ceiling((firstWeekdayOffset + Model.LastDay.Day) / 7.0) * 7;
+    var daysOfWeek = new[] { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
+}
+
+<div class="card calendar-card mb-4">
+    <div class="card-header d-flex align-items-center justify-content-between">
+        <a class="btn btn-sm btn-outline-secondary"
+           asp-controller="@ViewContext.RouteData.Values["controller"]"
+           asp-action="@ViewContext.RouteData.Values["action"]"
+           asp-route-year="@Model.PrevMonth.Year"
+           asp-route-month="@Model.PrevMonth.Month"
+           asp-route-projectId="@Model.ProjectId">&laquo;</a>
+        <strong>@Model.MonthLabel</strong>
+        <a class="btn btn-sm btn-outline-secondary"
+           asp-controller="@ViewContext.RouteData.Values["controller"]"
+           asp-action="@ViewContext.RouteData.Values["action"]"
+           asp-route-year="@Model.NextMonth.Year"
+           asp-route-month="@Model.NextMonth.Month"
+           asp-route-projectId="@Model.ProjectId">&raquo;</a>
+    </div>
+    <div class="card-body p-2">
+        <table class="table table-sm calendar-grid mb-0">
+            <thead>
+                <tr>
+                    @foreach (var d in daysOfWeek)
+                    {
+                        <th class="text-center text-muted">@d</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @for (var i = 0; i < totalCells; i++)
+                {
+                    if (i % 7 == 0) { @Html.Raw("<tr>") }
+                    var dayNumber = i - firstWeekdayOffset + 1;
+                    if (dayNumber < 1 || dayNumber > Model.LastDay.Day)
+                    {
+                        <td class="calendar-cell calendar-empty"></td>
+                    }
+                    else
+                    {
+                        var date = new DateTime(Model.Year, Model.Month, dayNumber);
+                        var isToday = date == Model.Today;
+                        Model.TasksByDay.TryGetValue(date, out var tasks);
+                        var hasTasks = tasks is { Count: > 0 };
+                        var cssClass = "calendar-cell" + (isToday ? " calendar-today" : "") + (hasTasks ? " calendar-has-tasks" : "");
+                        <td class="@cssClass">
+                            <div class="calendar-day">@dayNumber</div>
+                            @if (hasTasks)
+                            {
+                                <ul class="calendar-tasks">
+                                    @foreach (var task in tasks!.Take(3))
+                                    {
+                                        <li class="calendar-task status-@task.Status.ToString().ToLower()"
+                                            title="@task.Title (@task.Project?.Name)">
+                                            <a asp-controller="Tasks" asp-action="Details" asp-route-id="@task.Id">@task.Title</a>
+                                        </li>
+                                    }
+                                    @if (tasks!.Count > 3)
+                                    {
+                                        <li class="text-muted small">+@(tasks.Count - 3) more</li>
+                                    }
+                                </ul>
+                            }
+                        </td>
+                    }
+                    if (i % 7 == 6) { @Html.Raw("</tr>") }
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer small text-muted">
+        <span class="legend-dot legend-has-tasks"></span> day with tasks
+        &nbsp; <span class="legend-dot legend-today"></span> today
+    </div>
+</div>

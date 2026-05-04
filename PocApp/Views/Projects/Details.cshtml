@@ -1,0 +1,47 @@
+@model PocApp.Models.Project
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">@Model.Name</h2>
+    <div>
+        <a class="btn btn-outline-secondary" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+        <a class="btn btn-outline-secondary" asp-action="Index">Back</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-7">
+        <dl class="row">
+            <dt class="col-sm-3">Owner</dt>
+            <dd class="col-sm-9">@(Model.Owner?.FullName ?? Model.Owner?.Email)</dd>
+            <dt class="col-sm-3">Created</dt>
+            <dd class="col-sm-9">@Model.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</dd>
+            <dt class="col-sm-3">Description</dt>
+            <dd class="col-sm-9">@(string.IsNullOrWhiteSpace(Model.Description) ? "—" : Model.Description)</dd>
+        </dl>
+
+        <h4 class="mt-4 d-flex justify-content-between align-items-center">
+            Tasks
+            <a class="btn btn-sm btn-primary" asp-controller="Tasks" asp-action="Create" asp-route-projectId="@Model.Id">+ New task</a>
+        </h4>
+        <table class="table table-sm">
+            <thead><tr><th>Title</th><th>Due</th><th>Status</th><th>Assigned</th></tr></thead>
+            <tbody>
+                @foreach (var t in Model.Tasks.OrderBy(t => t.DueDate))
+                {
+                    <tr>
+                        <td><a asp-controller="Tasks" asp-action="Details" asp-route-id="@t.Id">@t.Title</a></td>
+                        <td>@t.DueDate.ToString("yyyy-MM-dd")</td>
+                        <td><span class="status-badge @t.Status.ToString().ToLower()">@t.Status</span></td>
+                        <td>@(t.AssignedUser?.FullName ?? "-")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-lg-5">
+        @await Component.InvokeAsync("Calendar", new { year = (int?)ViewBag.Year, month = (int?)ViewBag.Month, projectId = Model.Id })
+    </div>
+</div>

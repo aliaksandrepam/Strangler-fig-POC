@@ -1,0 +1,62 @@
+@model PocApp.Models.ApplicationUser
+@{
+    ViewData["Title"] = Model.FullName ?? Model.Email;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">@(Model.FullName ?? Model.Email)</h2>
+    <div>
+        <a class="btn btn-outline-secondary" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+        <a class="btn btn-outline-secondary" asp-action="Index">Back</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-7">
+        <dl class="row">
+            <dt class="col-sm-3">Email</dt><dd class="col-sm-9">@Model.Email</dd>
+            <dt class="col-sm-3">Full name</dt><dd class="col-sm-9">@(Model.FullName ?? "-")</dd>
+        </dl>
+
+        <h4 class="mt-4">Owned projects</h4>
+        @if (!Model.OwnedProjects.Any())
+        {
+            <p class="text-muted">None.</p>
+        }
+        else
+        {
+            <ul>
+                @foreach (var p in Model.OwnedProjects)
+                {
+                    <li><a asp-controller="Projects" asp-action="Details" asp-route-id="@p.Id">@p.Name</a></li>
+                }
+            </ul>
+        }
+
+        <h4 class="mt-4">Assigned tasks</h4>
+        @if (!Model.AssignedTasks.Any())
+        {
+            <p class="text-muted">None.</p>
+        }
+        else
+        {
+            <table class="table table-sm">
+                <thead><tr><th>Title</th><th>Project</th><th>Due</th><th>Status</th></tr></thead>
+                <tbody>
+                    @foreach (var t in Model.AssignedTasks.OrderBy(t => t.DueDate))
+                    {
+                        <tr>
+                            <td><a asp-controller="Tasks" asp-action="Details" asp-route-id="@t.Id">@t.Title</a></td>
+                            <td>@t.Project?.Name</td>
+                            <td>@t.DueDate.ToString("yyyy-MM-dd")</td>
+                            <td><span class="status-badge @t.Status.ToString().ToLower()">@t.Status</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+    <div class="col-lg-5">
+        @await Component.InvokeAsync("Calendar", new { year = (int?)ViewBag.Year, month = (int?)ViewBag.Month })
+    </div>
+</div>
