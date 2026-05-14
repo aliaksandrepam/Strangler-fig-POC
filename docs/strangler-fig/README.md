@@ -11,6 +11,8 @@ Research notes on extracting microservices from the monolith using the strangler
 5. [End-state, Option 2 — without outbox](./05-end-state-without-outbox.md) — simpler infrastructure variant: synchronous service-to-service calls + periodic reconciliation. Trades decoupling for operational simplicity. Often the right starting point for a first extraction.
 6. [End-state, Option 3 — Service Bus without outbox](./06-end-state-bus-without-outbox.md) — keeps async events on Azure Service Bus but drops the outbox table. Two practical patterns: CDC reading the SQL Server transaction log, or naive publish-after-commit + reconciliation job. Recommended sweet spot for first-extraction .NET/Azure work.
 7. [The second extraction](./07-second-extraction.md) — what changes when you extract a second microservice after Activities: what gets reused, what's genuinely new (service-to-service interaction), how to pick the next candidate, what gets harder, traps to avoid.
+8. [Migration plan — adapting the customer's architecture](./08-migration-plan.md) — concrete reframing of the customer's five-service end-state into a phased, monolith-coexisting strangler fig. **AuthN extracted first** as the trust foundation alongside the platform, then domain services one at a time (Activities → Contacts → Matters), Tag dropped, ~18–24 month timeline.
+9. [Read-your-writes — handling UI staleness after writes](./09-read-your-writes.md) — the classic CQRS problem: user creates an activity, doesn't see it in the next list because the projection lags. Eight patterns, four-layer recommended stack (POST returns entity + optimistic UI + read-your-writes routing + SSE push), per-screen recipes, anti-patterns, telemetry.
 
 ## TL;DR
 
